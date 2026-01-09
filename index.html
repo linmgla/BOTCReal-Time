@@ -1,1 +1,1231 @@
 
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>血染鐘樓活動行事曆 by 曉風</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #6c757d;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .header-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .header-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .title-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .by-text {
+            font-size: 1.1rem;
+            font-weight: normal;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .filters-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            outline: none;
+        }
+        
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .filter-btn:active {
+            transform: translateY(0);
+        }
+        
+        .filter-btn.hidden {
+            opacity: 0.4;
+        }
+        
+        .filter-btn.hidden:hover {
+            opacity: 0.7;
+        }
+        
+        .calendar-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .weekday-header {
+            display: contents;
+        }
+        
+        .weekday-cell {
+            background: #495057;
+            color: white;
+            text-align: center;
+            padding: 15px 5px;
+            font-weight: 600;
+        }
+        
+        .day-cell {
+            background: white;
+            min-height: 120px;
+            padding: 12px;
+            position: relative;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        
+        .day-cell.today {
+            background-color: #fff9e6;
+            border: 2px solid #ffc107;
+            box-shadow: inset 0 0 8px rgba(255, 193, 7, 0.2);
+        }
+        
+        .day-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .date-text {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .event {
+            padding: 8px 10px;
+            margin: 6px 0;
+            font-size: 13px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        
+        .event:hover {
+            transform: translateX(3px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .event.hidden {
+            opacity: 0.3;
+            text-decoration: line-through;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .event-time {
+            font-weight: 600;
+            font-size: 12px;
+            min-width: 35px;
+        }
+        
+        .event-title {
+            font-weight: 500;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .empty-cell {
+            background: #f8f9fa;
+            color: #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            min-height: 120px;
+        }
+        
+        .no-events-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            font-size: 1.1rem;
+            display: none;
+        }
+        
+        .status-bar {
+            margin-top: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .status-indicator {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 10px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        /* 自定義提示框樣式 */
+        .custom-tooltip {
+            position: fixed; /* 改為 fixed 定位 */
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            z-index: 1000;
+            max-width: 250px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .custom-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        
+        /* 點擊活動時的提示框樣式 */
+        .event-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .event-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            background-color: #6c757d;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .event-detail {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .event-detail-icon {
+            width: 24px;
+            margin-right: 12px;
+            color: #6c757d;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .event-detail-text {
+            flex: 1;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px 24px;
+            text-align: center;
+        }
+        
+        .modal-btn {
+            padding: 12px 32px;
+            background-color: #4dabf7;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin: 0 5px;
+        }
+        
+        .modal-btn:hover {
+            background-color: #339af0;
+        }
+        
+        .modal-btn.secondary {
+            background-color: #6c757d;
+        }
+        
+        .modal-btn.secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        @media (max-width: 1200px) {
+            .calendar-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .calendar-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 700px) {
+            .calendar-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-btn {
+                width: 100%;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .by-text {
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .by-text {
+                font-size: 0.8rem;
+            }
+            
+            .day-cell {
+                min-height: 100px;
+            }
+            
+            .modal-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-logo">
+                    <img src="https://meee.com.tw/ctqdoRm.jpg" alt="血染鐘樓Logo">
+                </div>
+                <div class="title-container">
+                    <h1>血染鐘樓活動行事曆</h1>
+                    <div class="by-text">by 曉風</div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="filters-container">
+            <div class="filters" id="filters">
+                <div class="filter-label">地點篩選：</div>
+                <!-- 篩選按鈕會由JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="calendar-container">
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- 星期表頭 -->
+                <div class="weekday-header">
+                    <div class="weekday-cell">日</div>
+                    <div class="weekday-cell">一</div>
+                    <div class="weekday-cell">二</div>
+                    <div class="weekday-cell">三</div>
+                    <div class="weekday-cell">四</div>
+                    <div class="weekday-cell">五</div>
+                    <div class="weekday-cell">六</div>
+                </div>
+                <!-- 日曆內容會由JavaScript生成 -->
+            </div>
+            
+            <div class="no-events-message" id="noEvents">
+                目前選擇的地點沒有活動安排
+            </div>
+            
+            <div class="status-bar" id="statusBar">
+                <div>顯示所有地點的活動</div>
+                <div class="status-indicator">
+                    <div class="indicator-dot" style="background: #4dabf7"></div>
+                    <span>101鐘樓</span>
+                    <div class="indicator-dot" style="background: #da77f2; margin-left: 10px"></div>
+                    <span>歪常研究院</span>
+                    <div class="indicator-dot" style="background: #3a8c4a; margin-left: 10px"></div>
+                    <span>小怪寶家長會</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 點擊活動時顯示的提示框 -->
+        <div class="event-modal" id="eventModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">活動詳細資訊</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="event-detail">
+                        <div class="event-detail-icon">📅</div>
+                        <div class="event-detail-text" id="modalDate">日期：</div>
+                    </div>
+                    <div class="event-detail">
+                        <div class="event-detail-icon">⏰</div>
+                        <div class="event-detail-text" id="modalTime">時間：</div>
+                    </div>
+                    <div class="event-detail">
+                        <div class="event-detail-icon">📍</div>
+                        <div class="event-detail-text" id="modalLocation">地點：</div>
+                    </div>
+                    <div class="event-detail">
+                        <div class="event-detail-icon">🎭</div>
+                        <div class="event-detail-text" id="modalScript">劇本：</div>
+                    </div>
+                    <div class="event-detail">
+                        <div class="event-detail-icon">📖</div>
+                        <div class="event-detail-text" id="modalStoryteller">說書人：</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn" id="modalLinkBtn">前往報名</button>
+                    <button class="modal-btn secondary" id="modalCloseBtn">關閉</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📝 使用說明</h3>
+            <ul>
+                <li>點擊上方地點按鈕可切換顯示/隱藏該地點活動</li>
+                <li>按鈕顏色變淡表示該地點活動已隱藏</li>
+                <li>滑鼠懸停在活動上可查看簡要資訊</li>
+                <li>點擊活動可查看詳細資訊並前往連結</li>
+                <li>活動時間均為24小時制</li>
+                <li>已過期的活動按鈕顯示為「前往查看」</li>
+                <li>資料來源：Google Sheets，會自動更新</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Google Sheets CSV 連結
+        const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT8GSdmGL5ggYr0ADz2fwltf9mBgv-77ggRneKQOBnebWG9HGOwsqpbhn5wpYgrezLHUNwIxi1ACm5r/pub?output=csv';
+        
+        // 地點顏色配置
+        const locationConfig = {
+            "101鐘樓": {
+                color: "#4dabf7",      // 藍色
+                bgColor: "#e7f5ff",    // 淺藍色背景
+                borderColor: "#4dabf7", // 藍色邊框
+                hiddenColor: "#f0f8ff", // 隱藏時的淺藍色
+                hiddenBorder: "#a5d8ff" // 隱藏時的淺藍色邊框
+            },
+            "歪常研究院": {
+                color: "#da77f2",      // 紫色
+                bgColor: "#f8f0fc",    // 淺紫色背景
+                borderColor: "#da77f2", // 紫色邊框
+                hiddenColor: "#fdf2ff", // 隱藏時的淺紫色
+                hiddenBorder: "#e599f7" // 隱藏時的淺紫色邊框
+            },
+            "小怪寶家長會": {
+                color: "#3a8c4a",      // 綠色
+                bgColor: "#e6f7e9",    // 淺綠色背景
+                borderColor: "#3a8c4a", // 綠色邊框
+                hiddenColor: "#f0f9f2", // 隱藏時的淺綠色
+                hiddenBorder: "#a3d9b1" // 隱藏時的淺綠色邊框
+            }
+        };
+
+        // 隱藏的地點（默認都顯示）
+        let hiddenLocations = new Set();
+        // 活動數據
+        let eventData = [];
+        
+        // 從Google Sheets獲取數據
+        async function fetchEventData() {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_CSV_URL);
+                const csvText = await response.text();
+                
+                // 解析CSV數據
+                const rows = csvText.split('\n');
+                
+                // 跳過標題行並處理每一行數據
+                eventData = [];
+                
+                // 從第二行開始（索引1），跳過標題行
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i].trim();
+                    if (!row) continue; // 跳過空行
+                    
+                    // 處理CSV中的引號和逗號
+                    const columns = [];
+                    let currentColumn = '';
+                    let inQuotes = false;
+                    
+                    for (let j = 0; j < row.length; j++) {
+                        const char = row[j];
+                        
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            columns.push(currentColumn);
+                            currentColumn = '';
+                        } else {
+                            currentColumn += char;
+                        }
+                    }
+                    
+                    // 添加最後一列
+                    columns.push(currentColumn);
+                    
+                    // 確保有足夠的列
+                    if (columns.length >= 6) {
+                        const dateTime = columns[0].trim();
+                        let date = '';
+                        let time = '';
+                        
+                        // 解析日期時間格式
+                        if (dateTime) {
+                            // 嘗試解析不同的日期格式
+                            const dateMatch = dateTime.match(/(\d{4})-(\d{2})-(\d{2})/);
+                            if (dateMatch) {
+                                date = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+                            }
+                            
+                            // 嘗試解析時間
+                            const timeMatch = dateTime.match(/(\d{2}):(\d{2}):(\d{2})/);
+                            if (timeMatch) {
+                                time = `${timeMatch[1]}:${timeMatch[2]}:${timeMatch[3]}`;
+                            }
+                        }
+                        
+                        const location = columns[2]?.trim() || '';
+                        const script = columns[3]?.trim() || '';
+                        const storyteller = columns[4]?.trim() || '';
+                        const link = columns[5]?.trim() || '';
+                        
+                        // 只添加有基本資訊的活動
+                        if (date && location && script) {
+                            eventData.push({
+                                date,
+                                time,
+                                location,
+                                script,
+                                storyteller,
+                                link
+                            });
+                        }
+                    }
+                }
+                
+                console.log('成功從Google Sheets載入', eventData.length, '個活動');
+                return true;
+            } catch (error) {
+                console.error('從Google Sheets獲取數據時發生錯誤:', error);
+                return false;
+            }
+        }
+        
+        // 輔助函數：格式化日期為 YYYY-MM-DD
+        function formatDateToYYYYMMDD(date) {
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 檢查日期是否已過期
+        function isDatePassed(eventDate, eventTime) {
+            const now = new Date();
+            
+            // 如果時間為空，只比較日期（不包含時間）
+            if (!eventTime || eventTime.trim() === "") {
+                const eventDateOnly = new Date(eventDate);
+                eventDateOnly.setHours(0, 0, 0, 0);
+                
+                const nowDateOnly = new Date();
+                nowDateOnly.setHours(0, 0, 0, 0);
+                
+                // 比較日期（不包含時間）
+                return nowDateOnly > eventDateOnly;
+            }
+            
+            // 如果有時間，則比較完整的日期時間
+            const eventDateTime = new Date(`${eventDate}T${eventTime}`);
+            return now > eventDateTime;
+        }
+        
+        // 初始化函數
+        async function init() {
+            // 顯示載入訊息
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">正在從Google Sheets載入資料...</div>';
+            
+            // 從Google Sheets獲取數據
+            const success = await fetchEventData();
+            
+            if (success) {
+                generateFilterButtons();
+                generateCalendar();
+                setupModalEvents();
+                updateStatusBar();
+            } else {
+                calendarGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #dc3545;">無法從Google Sheets載入資料，請稍後再試。</div>';
+            }
+        }
+        
+        // 設置提示框事件
+        function setupModalEvents() {
+            const modal = document.getElementById('eventModal');
+            const closeBtn = document.getElementById('modalCloseBtn');
+            const linkBtn = document.getElementById('modalLinkBtn');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+            
+            // 點擊背景關閉提示框
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+            
+            // 為連結按鈕添加點擊事件
+            linkBtn.addEventListener('click', () => {
+                const link = linkBtn.dataset.link;
+                if (link && link !== '#') {
+                    window.open(link, '_blank');
+                }
+                modal.classList.remove('active');
+            });
+        }
+        
+        // 顯示滑鼠懸停提示框
+        function showTooltip(event, eventInfo, dayInfo) {
+            // 移除現有的提示框
+            removeTooltip();
+            
+            // 建立新的提示框
+            const tooltip = document.createElement('div');
+            tooltip.className = 'custom-tooltip';
+            tooltip.textContent = `${eventInfo.location} - ${eventInfo.script}`;
+            tooltip.style.opacity = '1';
+            
+            // 定位提示框 - 使用固定定位，考慮頁面滾動
+            const rect = event.target.getBoundingClientRect();
+            
+            // 計算提示框的位置
+            let top = rect.top - 40; // 在元素上方40px
+            let left = rect.left + rect.width / 2;
+            
+            // 確保提示框不會超出視窗頂部
+            if (top < 10) {
+                top = rect.bottom + 10; // 如果上方空間不足，顯示在下方
+                tooltip.style.transform = 'translateX(-50%)';
+                tooltip.style.top = `${top}px`;
+                tooltip.style.left = `${left}px`;
+            } else {
+                tooltip.style.transform = 'translateX(-50%)';
+                tooltip.style.top = `${top}px`;
+                tooltip.style.left = `${left}px`;
+            }
+            
+            // 確保提示框不會超出視窗右側
+            const tooltipWidth = 200; // 估計提示框寬度
+            if (left + tooltipWidth / 2 > window.innerWidth) {
+                left = window.innerWidth - tooltipWidth / 2 - 10;
+                tooltip.style.left = `${left}px`;
+            }
+            
+            // 確保提示框不會超出視窗左側
+            if (left - tooltipWidth / 2 < 10) {
+                left = tooltipWidth / 2 + 10;
+                tooltip.style.left = `${left}px`;
+            }
+            
+            // 添加到文檔
+            document.body.appendChild(tooltip);
+            
+            // 儲存參考以便移除
+            event.target._tooltip = tooltip;
+            
+            // 設定滑鼠離開事件
+            const removeTooltipHandler = () => removeTooltip();
+            event.target.addEventListener('mouseleave', removeTooltipHandler, { once: true });
+        }
+        
+        // 移除滑鼠懸停提示框
+        function removeTooltip() {
+            const tooltip = document.querySelector('.custom-tooltip');
+            if (tooltip) {
+                tooltip.remove();
+            }
+        }
+        
+        // 顯示點擊活動提示框
+        function showEventModal(eventInfo, dayInfo) {
+            const modal = document.getElementById('eventModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDate = document.getElementById('modalDate');
+            const modalTime = document.getElementById('modalTime');
+            const modalLocation = document.getElementById('modalLocation');
+            const modalScript = document.getElementById('modalScript');
+            const modalStoryteller = document.getElementById('modalStoryteller');
+            const linkBtn = document.getElementById('modalLinkBtn');
+            
+            // 設置提示框內容
+            modalTitle.textContent = eventInfo.script;
+            modalDate.textContent = `日期：${dayInfo.month}/${dayInfo.date}（${dayInfo.weekday}）`;
+            
+            // 處理時間顯示（如果時間為空則留空）
+            if (eventInfo.time && eventInfo.time.trim() !== "") {
+                modalTime.textContent = `時間：${eventInfo.time.substring(0, 5)}`;
+            } else {
+                modalTime.textContent = `時間：`; // 留空
+            }
+            
+            modalLocation.textContent = `地點：${eventInfo.location}`;
+            modalScript.textContent = `劇本：${eventInfo.script}`;
+            modalStoryteller.textContent = `說書人：${eventInfo.storyteller || '待確認'}`;
+            
+            // 檢查活動是否已過期（包含無時間的情況）
+            const isPassed = isDatePassed(eventInfo.date, eventInfo.time);
+            
+            // 設置連結
+            linkBtn.dataset.link = eventInfo.link || '#';
+            if (eventInfo.link && eventInfo.link !== '#') {
+                // 根據是否過期顯示不同的按鈕文字
+                if (isPassed) {
+                    linkBtn.textContent = '前往查看';
+                    linkBtn.style.backgroundColor = '#6c757d'; // 灰色，表示已過期
+                } else {
+                    linkBtn.textContent = '前往報名';
+                    linkBtn.style.backgroundColor = '#4dabf7'; // 藍色，表示可報名
+                }
+                linkBtn.style.display = 'inline-block';
+                linkBtn.disabled = false;
+                linkBtn.style.opacity = '1';
+                linkBtn.style.cursor = 'pointer';
+            } else {
+                linkBtn.textContent = '無連結';
+                linkBtn.style.display = 'inline-block';
+                linkBtn.disabled = true;
+                linkBtn.style.opacity = '0.6';
+                linkBtn.style.cursor = 'not-allowed';
+                linkBtn.style.backgroundColor = '#6c757d';
+            }
+            
+            // 顯示提示框
+            modal.classList.add('active');
+        }
+        
+        // 生成篩選按鈕
+        function generateFilterButtons() {
+            const filtersContainer = document.getElementById('filters');
+            
+            // 清空現有按鈕（保留標籤）
+            const label = filtersContainer.querySelector('.filter-label');
+            filtersContainer.innerHTML = '';
+            if (label) filtersContainer.appendChild(label);
+            
+            // 收集所有出現的地點
+            const allLocations = new Set();
+            eventData.forEach(event => {
+                if (event.location) {
+                    allLocations.add(event.location);
+                }
+            });
+            
+            // 為每個地點生成按鈕
+            allLocations.forEach(location => {
+                // 如果地點還沒有顏色配置，使用預設配置
+                if (!locationConfig[location]) {
+                    // 創建新的顏色配置
+                    const colors = [
+                        { color: "#f76707", bgColor: "#fff4e6", borderColor: "#f76707", hiddenColor: "#fff9db", hiddenBorder: "#ffd8a8" }, // 橙色
+                        { color: "#0b7285", bgColor: "#e3fafc", borderColor: "#0b7285", hiddenColor: "#e6fcf5", hiddenBorder: "#99e9f2" }, // 青色
+                        { color: "#5c940d", bgColor: "#ebfbee", borderColor: "#5c940d", hiddenColor: "#f4fce3", hiddenBorder: "#d8f5a2" }, // 淺綠色
+                        { color: "#ae3ec9", bgColor: "#f8f0fc", borderColor: "#ae3ec9", hiddenColor: "#f3d9fa", hiddenBorder: "#e599f7" }, // 深紫色
+                    ];
+                    
+                    const randomColor = colors[allLocations.size % colors.length];
+                    locationConfig[location] = randomColor;
+                }
+                
+                const isHidden = hiddenLocations.has(location);
+                const config = locationConfig[location];
+                
+                const button = document.createElement('button');
+                button.className = `filter-btn ${isHidden ? 'hidden' : ''}`;
+                button.textContent = location;
+                
+                // 設置按鈕樣式
+                button.style.backgroundColor = isHidden ? config.hiddenColor : config.bgColor;
+                button.style.color = isHidden ? '#adb5bd' : config.color;
+                button.style.border = `2px solid ${isHidden ? config.hiddenBorder : config.borderColor}`;
+                
+                button.addEventListener('click', () => toggleLocation(location));
+                
+                filtersContainer.appendChild(button);
+            });
+        }
+        
+        // 切換地點顯示/隱藏
+        function toggleLocation(location) {
+            if (hiddenLocations.has(location)) {
+                hiddenLocations.delete(location);
+            } else {
+                hiddenLocations.add(location);
+            }
+            
+            generateFilterButtons();
+            generateCalendar();
+            updateStatusBar();
+        }
+        
+        // 更新狀態欄
+        function updateStatusBar() {
+            const statusBar = document.getElementById('statusBar');
+            const statusText = statusBar.querySelector('div:first-child');
+            const statusIndicator = statusBar.querySelector('.status-indicator');
+            const hiddenCount = hiddenLocations.size;
+            
+            if (hiddenCount === 0) {
+                statusText.textContent = "顯示所有地點的活動";
+                statusBar.style.backgroundColor = "#e7f5ff";
+                statusBar.style.color = "#1864ab";
+            } else if (hiddenCount === eventData.filter(e => e.location).map(e => e.location).filter((v, i, a) => a.indexOf(v) === i).length) {
+                statusText.textContent = "所有地點活動皆已隱藏";
+                statusBar.style.backgroundColor = "#f8f9fa";
+                statusBar.style.color = "#6c757d";
+            } else {
+                const hiddenList = Array.from(hiddenLocations).join('、');
+                statusText.textContent = `已隱藏：${hiddenList}`;
+                statusBar.style.backgroundColor = "#fff3cd";
+                statusBar.style.color = "#856404";
+            }
+            
+            // 更新狀態指示器
+            statusIndicator.innerHTML = '';
+            const allLocations = [...new Set(eventData.map(event => event.location).filter(loc => loc))];
+            
+            allLocations.forEach(location => {
+                const config = locationConfig[location] || locationConfig["101鐘樓"]; // 使用預設配置
+                
+                const indicatorDot = document.createElement('div');
+                indicatorDot.className = 'indicator-dot';
+                indicatorDot.style.background = config.color;
+                indicatorDot.style.marginLeft = '10px';
+                
+                const locationSpan = document.createElement('span');
+                locationSpan.textContent = location;
+                
+                statusIndicator.appendChild(indicatorDot);
+                statusIndicator.appendChild(locationSpan);
+            });
+        }
+        
+        // 生成日曆
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const noEventsMessage = document.getElementById('noEvents');
+            
+            // 清空整個日曆（包括星期表頭）
+            calendarGrid.innerHTML = '';
+            
+            // 重新添加星期表頭
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            weekdays.forEach(day => {
+                const weekdayCell = document.createElement('div');
+                weekdayCell.className = 'weekday-cell';
+                weekdayCell.textContent = day;
+                calendarGrid.appendChild(weekdayCell);
+            });
+            
+            // 建立當前月份的日曆數據
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; // 月份是0-based
+            const currentYear = now.getFullYear();
+            
+            const currentCalendar = createCalendarData(currentMonth, currentYear);
+            let hasVisibleEvents = false;
+            
+            // 獲取今天的日期字符串
+            const todayStr = formatDateToYYYYMMDD(now);
+            
+            // 生成每一天的單元格
+            currentCalendar.forEach(day => {
+                const dayCell = document.createElement('div');
+                
+                // 檢查是否為空白單元格
+                if (day.isEmpty) {
+                    dayCell.className = 'empty-cell';
+                    calendarGrid.appendChild(dayCell);
+                    return; // 跳過後面的處理
+                }
+                
+                dayCell.className = 'day-cell';
+                
+                // 標記今天
+                if (day.fullDate === todayStr) {
+                    dayCell.classList.add('today');
+                }
+                
+                // 日期標題
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'day-number';
+                
+                const dayText = document.createElement('span');
+                dayText.textContent = `${day.month}/${day.date}`;
+                
+                const weekdayText = document.createElement('span');
+                weekdayText.className = 'date-text';
+                weekdayText.textContent = `(${day.weekday})`;
+                
+                dayNumber.appendChild(dayText);
+                dayNumber.appendChild(weekdayText);
+                dayCell.appendChild(dayNumber);
+                
+                // 過濾當天的活動
+                const dayEvents = getEventsForDate(day.fullDate);
+                
+                // 檢查是否有任何可見的活動
+                let hasVisibleDayEvents = false;
+                
+                if (dayEvents.length > 0) {
+                    dayEvents.forEach(event => {
+                        const isHidden = hiddenLocations.has(event.location);
+                        
+                        if (!isHidden) {
+                            hasVisibleEvents = true;
+                            hasVisibleDayEvents = true;
+                        }
+                        
+                        const eventDiv = document.createElement('div');
+                        eventDiv.className = `event ${isHidden ? 'hidden' : ''}`;
+                        
+                        const config = locationConfig[event.location] || locationConfig["101鐘樓"];
+                        eventDiv.style.backgroundColor = isHidden ? config.hiddenColor : config.bgColor;
+                        eventDiv.style.borderLeftColor = isHidden ? config.hiddenBorder : config.borderColor;
+                        eventDiv.style.color = isHidden ? '#adb5bd' : '#333';
+                        
+                        // 檢查活動是否已過期（包含無時間的情況）
+                        const isPassed = isDatePassed(event.date, event.time);
+                        if (isPassed) {
+                            eventDiv.style.opacity = '0.7'; // 已過期的活動稍微透明
+                        }
+                        
+                        // 事件內容 - 一行顯示：時間 + 劇本名稱
+                        const timeSpan = document.createElement('span');
+                        timeSpan.className = 'event-time';
+                        
+                        // 處理時間顯示（如果時間為空則留空）
+                        if (event.time && event.time.trim() !== "") {
+                            timeSpan.textContent = event.time.substring(0, 5);
+                        } else {
+                            timeSpan.textContent = ""; // 直接空白
+                        }
+                        
+                        const titleSpan = document.createElement('span');
+                        titleSpan.className = 'event-title';
+                        titleSpan.textContent = event.script;
+                        
+                        eventDiv.appendChild(timeSpan);
+                        eventDiv.appendChild(titleSpan);
+                        
+                        // 滑鼠懸停事件（顯示簡短提示框）
+                        if (!isHidden) {
+                            eventDiv.addEventListener('mouseenter', (e) => {
+                                showTooltip(e, event, day);
+                            });
+                            
+                            eventDiv.addEventListener('mouseleave', removeTooltip);
+                        }
+                        
+                        // 點擊事件（顯示詳細提示框）
+                        if (!isHidden) {
+                            eventDiv.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                showEventModal(event, day);
+                            });
+                        }
+                        
+                        dayCell.appendChild(eventDiv);
+                    });
+                }
+                
+                // 如果當天沒有活動，不顯示任何東西
+                if (!hasVisibleDayEvents) {
+                    // 不顯示"暫無活動"，保持空白
+                }
+                
+                calendarGrid.appendChild(dayCell);
+            });
+            
+            // 顯示/隱藏無活動訊息
+            if (!hasVisibleEvents && hiddenLocations.size > 0) {
+                noEventsMessage.style.display = 'block';
+                const allLocations = [...new Set(eventData.map(event => event.location).filter(loc => loc))];
+                if (hiddenLocations.size === allLocations.length) {
+                    noEventsMessage.textContent = '所有地點活動皆已隱藏';
+                } else {
+                    noEventsMessage.textContent = '目前選擇的地點沒有活動安排';
+                }
+            } else {
+                noEventsMessage.style.display = 'none';
+            }
+        }
+        
+        // 獲取指定日期的活動
+        function getEventsForDate(date) {
+            return eventData.filter(event => {
+                return event.date === date;
+            });
+        }
+        
+        // 創建月曆數據
+        function createCalendarData(month, year) {
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const firstDayOfMonth = new Date(year, month - 1, 1).getDay();
+            
+            const calendarData = [];
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            
+            // 1. 先添加空白單元格（讓1/1對應到正確的星期）
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                calendarData.push({
+                    date: '',        // 空白
+                    month: month,
+                    weekday: '',     // 空白
+                    fullDate: '',    // 空白
+                    isEmpty: true    // 標記為空單元格
+                });
+            }
+            
+            // 2. 添加本月日期
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month - 1, day);
+                calendarData.push({
+                    date: day,
+                    month: month,
+                    weekday: weekdays[date.getDay()],
+                    fullDate: `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`,
+                    isEmpty: false
+                });
+            }
+            
+            return calendarData;
+        }
+        
+        // 頁面加載時初始化
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // 每5分鐘自動重新整理資料
+        setInterval(async () => {
+            console.log('自動更新資料...');
+            await fetchEventData();
+            generateFilterButtons();
+            generateCalendar();
+            updateStatusBar();
+        }, 5 * 60 * 1000); // 5分鐘
+        
+        // 增加重新整理按鈕（可選）
+        const refreshBtn = document.createElement('button');
+        refreshBtn.textContent = '重新整理資料';
+        refreshBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; padding: 10px 15px; background: #4dabf7; color: white; border: none; border-radius: 5px; cursor: pointer; z-index: 1000;';
+        refreshBtn.addEventListener('click', async () => {
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = '更新中...';
+            await init();
+            refreshBtn.disabled = false;
+            refreshBtn.textContent = '重新整理資料';
+        });
+        document.body.appendChild(refreshBtn);
+    </script>
+</body>
+</html>
